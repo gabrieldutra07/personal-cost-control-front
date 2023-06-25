@@ -1,4 +1,4 @@
-const addCost2 = () => {
+const addCost = () => {
     // WARNING: For POST requests, body is set to null by browsers.
     var data = JSON.stringify({
         "description": document.getElementById("description").value,
