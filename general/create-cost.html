@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="../general/js/script.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+
+    .submit-container {
+      text-align: right;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>Cadastrar Gasto</h1>
+    <form>
+      <label for="description">Descrição do Gasto</label>
+      <input type="text" id="description" name="description" placeholder="Informe a descrição" >
+
+      <label for="value">Valor</label>
+      <input type="number" id="value" name="value" placeholder="Informe o valor" step="0.01" >
+
+      <label for="date">Data</label>
+      <input type="date" id="date" name="date" >
+
+      <label for="category">Categoria</label>
+      <select id="category" name="category" >
+        <option value="">Selecione uma categoria</option>
+        <option value="essencial">Essencial</option>
+        <option value="alimentacao">Alimentação</option>
+        <option value="saidas">Saídas</option>
+        <option value="investimento">Investimento</option>
+      </select>
+
+      <div class="submit-container">
+        <input type="file" id="fileInput" accept=".xlsx" style="display: none;">
+        <label for="fileInput">Upload File</label>
+        <button type="button" onclick="document.getElementById('fileInput').click()">Choose File</button>
+      </div>
+    </form>
+    <button onclick="addCost()">Cadastrar</button>
+  </div>
+
+  <script>
+    function handleFile(e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        const headers = jsonData[0];
+        const rows = jsonData.slice(1);
+
+        const formattedData = rows.map(row => {
+          const obj = {};
+          headers.forEach((header, index) => {
+            obj[header] = row[index];
+          });
+          return obj;
+        });
+
+        // Enviar dados formatados para a API através de uma chamada AJAX ou fetch
+        const apiUrl = 'http://localhost:8080/cost';
+
+        // Enviar apenas o primeiro objeto do array formattedData como corpo da requisição
+        const requestBody = formattedData[0];
+
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        })
+          .then(response => {
+            if (response.ok) {
+              console.log('Dados enviados com sucesso!');
+              // Limpar o formulário ou fazer qualquer ação necessária após o envio bem-sucedido
+            } else {
+              console.error('Falha ao enviar os dados. Status:', response.status);
+            }
+          })
+          .catch(error => {
+            console.error('Erro ao enviar os dados:', error);
+          });
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    document.getElementById('fileInput').addEventListener('change', handleFile);
+  </script>
+</body>
+</html>
