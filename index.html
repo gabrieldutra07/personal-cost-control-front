@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+
+    form {
+      background-color: #ffffff;
+      padding: 50px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      float: right;
+      margin-top: 10px;
+    }
+    
+    .inputCadastro{
+        margin: 10px;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <form>
+    <h1>Login</h1>
+
+    <label for="username">Nome do usuário</label>
+    <input type="text" id="username" name="username" placeholder="Your username" required>
+
+    <label for="password">Senha</label>
+    <input type="password" id="password" name="password" placeholder="Your password" required>
+
+    <input type="submit" value="Login">
+    <input type="submit" value="Cadastrar" class="inputCadastro">
+  </form>
+</body>
+</html>
